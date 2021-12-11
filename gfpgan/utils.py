@@ -81,7 +81,7 @@ class GFPGANer():
         self.gfpgan = self.gfpgan.to(self.device)
 
     @torch.no_grad()
-    def enhance(self, img, has_aligned=False, only_center_face=False, paste_back=True):
+    def enhance(self, img, has_aligned=False, only_center_face=False, paste_back=True, hide_faces=[]):
         self.face_helper.clean_all()
 
         if has_aligned:  # the inputs are already aligned
@@ -97,7 +97,7 @@ class GFPGANer():
             self.face_helper.align_warp_face()
 
         # face restoration
-        for cropped_face in self.face_helper.cropped_faces:
+        for idx, cropped_face in enumerate(self.face_helper.cropped_faces):
             # prepare data
             cropped_face_t = img2tensor(cropped_face / 255., bgr2rgb=True, float32=True)
             normalize(cropped_face_t, (0.5, 0.5, 0.5), (0.5, 0.5, 0.5), inplace=True)
@@ -112,7 +112,10 @@ class GFPGANer():
                 restored_face = cropped_face
 
             restored_face = restored_face.astype('uint8')
-            self.face_helper.add_restored_face(restored_face)
+            if idx in hide_faces:
+                self.face_helper.add_restored_face(cropped_face)
+            else:
+                self.face_helper.add_restored_face(restored_face)
 
         if not has_aligned and paste_back:
             # upsample the background
