@@ -1,11 +1,14 @@
-torch>=1.7
-numpy<1.21  # numba requires numpy<1.21,>=1.17
-opencv-python
+appdirs
+flask
+flask-cors
 torchvision
-scipy
-tqdm
+torch>=1.7
 basicsr>=1.3.4.0
 facexlib>=0.2.0.3
+numpy<1.21  # numba requires numpy<1.21,>=1.17
+opencv-python
+scipy
+tqdm
 lmdb
 pyyaml
 tb-nightly
